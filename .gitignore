@@ -1,5 +1,6 @@
 *.iml
 /.idea
+/vendor
 
 
 # Created by https://www.gitignore.io/api/windows,intellij,go
