@@ -23,6 +23,7 @@ func main() {
 	defer SyncLog()
 
 	flag.Parse()
+	InitFileLog(*logpath)
 	Log.Infow("start",
 			"port", *port,
 			"user", *user,
