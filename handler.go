@@ -4,11 +4,14 @@ import (
 	"net/http"
 	"strings"
 	"io/ioutil"
+	"time"
 )
 
 type Handler struct {
 	FileLogPath string
 	RedirectUrl string
+	LicenserAddr string
+	client *http.Client
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +33,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path == "/" {
 		http.Redirect(w, r, h.RedirectUrl, http.StatusTemporaryRedirect)
-		reqlog.Info("redirect", h.RedirectUrl)
+		reqlog.Infof("redirect %v", h.RedirectUrl)
 		return
 	}
 
@@ -41,7 +44,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if strings.HasPrefix(r.URL.Path, "/rpc") {
-		resp, err := http.Get("http://localhost%v" + r.URL.String())
+		if h.client == nil {
+			h.client = &http.Client{
+				Timeout: 5 * time.Second,
+			}
+		}
+		resp, err := h.client.Get(h.LicenserAddr + r.URL.String())
 		var buffer []byte
 		if err == nil {
 			buffer, err = ioutil.ReadAll(resp.Body)
@@ -49,7 +57,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			code := http.StatusInternalServerError
 			http.Error(w, http.StatusText(code), code)
-			reqlog.Info(http.StatusText(code), code, err)
+			reqlog.Infof("%v %v", http.StatusText(code), code, err)
 			return
 		}
 
@@ -61,5 +69,5 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	code := http.StatusNotFound
 	http.Error(w, http.StatusText(code), code)
-	reqlog.Info(http.StatusText(code), code)
+	reqlog.Infof("%v %v", http.StatusText(code), code)
 }

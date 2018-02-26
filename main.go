@@ -34,5 +34,6 @@ func main() {
 	http.ListenAndServe(fmt.Sprintf(":%v", *port), &Handler{
 		FileLogPath: *logpath,
 		RedirectUrl: *redirect,
+		LicenserAddr: fmt.Sprintf("http://localhost:%v", LICENSER_PORT),
 	})
 }
