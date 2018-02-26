@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	log "github.com/sirupsen/logrus"
 	"strings"
 	"io/ioutil"
 )
@@ -16,13 +15,11 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if ip == "" {
 		ip = strings.Split(r.RemoteAddr, ":")[0]
 	}
-	reqlog := log.WithFields(
-		log.Fields{
-			"ip": ip,
-			"method": r.Method,
-			"url": r.URL.String(),
-			"agent": r.UserAgent(),
-		})
+	reqlog := Log.With(
+			"ip", ip,
+			"method", r.Method,
+			"url", r.URL.String(),
+			"agent", r.UserAgent())
 	if r.Method != "GET" {
 		code := http.StatusMethodNotAllowed
 		http.Error(w, http.StatusText(code), code)
@@ -45,12 +42,13 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			code := http.StatusInternalServerError
 			http.Error(w, http.StatusText(code), code)
-			reqlog.WithError(err).Error(http.StatusText(code), code)
+			reqlog.Error(http.StatusText(code), code, err)
 			return
 		}
 
 		w.Write(buffer)
 		reqlog.Info("OK")
+		FileLog(ip, r.URL)
 		return
 	}
 

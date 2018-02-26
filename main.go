@@ -2,7 +2,8 @@ package main
 
 import (
 	"flag"
-	log "github.com/sirupsen/logrus"
+	"net/http"
+	"fmt"
 )
 
 const (
@@ -18,17 +19,19 @@ var (
 )
 
 func main() {
+	InitLog()
+	defer SyncLog()
+
 	flag.Parse()
-	log.SetFormatter(&log.JSONFormatter{})
-	log.WithFields(
-		log.Fields{
-			"port": *port,
-			"user": *user,
-			"redirect": *redirect,
-			"logpath": *logpath,
-			"binpath": *binpath,
-		}).Info("start")
+	Log.Infow("start",
+			"port", *port,
+			"user", *user,
+			"redirect", *redirect,
+			"logpath", *logpath,
+			"binpath", *binpath)
 	go Licenser(*binpath, LICENSER_PORT, *user)
 
-	//http.ListenAndServe(fmt.Sprintf(":%v", *port), )
+	http.ListenAndServe(fmt.Sprintf(":%v", *port), &Handler{
+		FileLogPath: *logpath,
+	})
 }
