@@ -8,6 +8,7 @@ import (
 
 type Handler struct {
 	FileLogPath string
+	RedirectUrl string
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +28,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.URL.Path == "/" {
+		http.Redirect(w, r, h.RedirectUrl, http.StatusTemporaryRedirect)
+		reqlog.Info("redirect", h.RedirectUrl)
+		return
+	}
+
 	if r.URL.Path == "/log" {
 		http.ServeFile(w, r, h.FileLogPath)
 		reqlog.Info("return", h.FileLogPath)
@@ -42,7 +49,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			code := http.StatusInternalServerError
 			http.Error(w, http.StatusText(code), code)
-			reqlog.Error(http.StatusText(code), code, err)
+			reqlog.Info(http.StatusText(code), code, err)
 			return
 		}
 
@@ -54,5 +61,5 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	code := http.StatusNotFound
 	http.Error(w, http.StatusText(code), code)
-	reqlog.Error(http.StatusText(code), code)
+	reqlog.Info(http.StatusText(code), code)
 }
