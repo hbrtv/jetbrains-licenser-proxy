@@ -25,10 +25,11 @@ func InitFileLog(logpath string) error {
 	return nil
 }
 
-func FileLog(ip string, u *url.URL) {
+func FileLog(ip, location string, u *url.URL) {
 	m := make(map[string]string)
 	m["time"] = time.Now().Format("2006-01-02T15:04:05")
 	m["ip"] = ip
+	m["location"] = location
 	for k, v := range u.Query() {
 		m[k] = strings.Join(v, ",")
 	}

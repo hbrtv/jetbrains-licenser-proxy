@@ -5,6 +5,8 @@ import (
 	"strings"
 	"io/ioutil"
 	"time"
+	"encoding/json"
+	"fmt"
 )
 
 type Handler struct {
@@ -63,11 +65,49 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		w.Write(buffer)
 		reqlog.Info("OK")
-		FileLog(ip, r.URL)
+		FileLog(ip, h.LocateIP(ip), r.URL)
 		return
 	}
 
 	code := http.StatusNotFound
 	http.Error(w, http.StatusText(code), code)
 	reqlog.Infof("%v %v", http.StatusText(code), code)
+}
+
+type LocateResponse struct {
+	Code int `json:"code"`
+	Data struct{
+		Country string `json:"country"`
+		Area string `json:"area"`
+		Region string `json:"region"`
+		City string `json:"city"`
+		County string `json:"county"`
+		Isp string `json:"isp"`
+	} `json:"data"`
+}
+
+func (h *Handler) LocateIP(ip string) string {
+	log := Log.With("ip", ip)
+	resp, err := h.client.Get("http://ip.taobao.com/service/getIpInfo.php?ip=" + ip)
+	if err != nil {
+		log.Infof("can not get ip location: %v", err)
+		return ""
+	}
+	buffer, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Infof("can not get ip location: %v", err)
+		return ""
+	}
+	response := LocateResponse{}
+	err = json.Unmarshal(buffer, &response)
+	if err != nil {
+		log.Infof("json unmarshal failed: %v, %s", err, buffer)
+		return ""
+	}
+	if response.Code != 0 {
+		log.Infof("can not get ip location: %s", buffer)
+		return ""
+	}
+	data := response.Data
+	return fmt.Sprintf("%v,%v,%v,%v,%v,%v", data.Country, data.Area, data.Region, data.City, data.County, data.Isp)
 }
