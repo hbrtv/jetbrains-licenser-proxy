@@ -27,7 +27,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		code := http.StatusMethodNotAllowed
 		http.Error(w, http.StatusText(code), code)
-		reqlog.Info(http.StatusText(code), code)
+		reqlog.Infof("%v %v", http.StatusText(code), code)
 		return
 	}
 
@@ -39,7 +39,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path == "/log" {
 		http.ServeFile(w, r, h.FileLogPath)
-		reqlog.Info("return", h.FileLogPath)
+		reqlog.Infof("return %v", h.FileLogPath)
 		return
 	}
 
