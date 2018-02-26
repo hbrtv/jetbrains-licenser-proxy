@@ -14,7 +14,7 @@ var (
 	port = flag.Int("p", 80, "port")
 	user = flag.String("u", "wolfogre.com", "user")
 	redirect = flag.String("r", "http://blog.wolfogre.com/posts/jetbrains-licenser/", "redirect")
-	logpath = flag.String("l", "/opt/log/last.log", "log path")
+	logpath = flag.String("l", "/opt/log/licenser.log", "log path")
 	binpath = flag.String("b", "/opt/bin/jetbrains-licenser", "bin path")
 )
 

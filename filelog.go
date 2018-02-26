@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"fmt"
 	"time"
+	"strings"
+	"encoding/json"
 )
 
 var (
@@ -23,9 +25,18 @@ func InitFileLog(logpath string) error {
 	return nil
 }
 
-func FileLog(ip string, u *url.URL) error {
+func FileLog(ip string, u *url.URL) {
+	m := make(map[string]string)
+	m["time"] = time.Now().Format("2006-01-02T15:04:05")
+	m["ip"] = ip
+	for k, v := range u.Query() {
+		m[k] = strings.Join(v, ",")
+	}
+	buffer, _ := json.Marshal(m)
 	fileM.Lock()
-	defer fileM.Unlock()
-	_, err := file.WriteString(fmt.Sprintf("%v [%v] %v\n", time.Now().Format("2006-01-02T15:04:05"), ip, u.String()))
-	return err
+	_, err := file.WriteString(fmt.Sprintf("%s\n", buffer))
+	fileM.Unlock()
+	if err != nil {
+		Log.Panic(err)
+	}
 }
