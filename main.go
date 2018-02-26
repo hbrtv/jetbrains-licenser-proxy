@@ -33,5 +33,6 @@ func main() {
 
 	http.ListenAndServe(fmt.Sprintf(":%v", *port), &Handler{
 		FileLogPath: *logpath,
+		RedirectUrl: *redirect,
 	})
 }
