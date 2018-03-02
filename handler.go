@@ -45,6 +45,11 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.URL.Path == "/_status" {
+		w.Write([]byte("OK"))
+		return
+	}
+
 	if strings.HasPrefix(r.URL.Path, "/rpc") {
 		if h.client == nil {
 			h.client = &http.Client{
