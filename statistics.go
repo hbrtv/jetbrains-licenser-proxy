@@ -4,12 +4,10 @@ import (
 	"io/ioutil"
 	"bufio"
 	"bytes"
-
 	"github.com/bitly/go-simplejson"
 	"sync"
 	"strings"
 	"time"
-	"fmt"
 )
 
 var (
