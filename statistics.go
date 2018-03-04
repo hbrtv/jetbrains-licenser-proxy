@@ -38,7 +38,7 @@ func InitStatistics(fileLogPath string) {
 			Log.Errorf("failed to new json: %v, %v", err, scanner.Text())
 			return
 		}
-		date := j.MustString("time")
+		date := j.Get("time").MustString()
 		if date == "" {
 			continue
 		}
@@ -52,21 +52,21 @@ func InitStatistics(fileLogPath string) {
 		if !ok {
 			user = make(map[string]bool)
 		}
-		user[j.MustString("machineId")] = true
+		user[j.Get("machineId").MustString()] = true
 		userResult[date] = user
 
 		ip, ok := ipResult[date]
 		if !ok {
 			ip = make(map[string]bool)
 		}
-		ip[j.MustString("ip")] = true
+		ip[j.Get("ip").MustString()] = true
 		ipResult[date] = ip
 
 		product, ok := productResult[date]
 		if !ok {
 			product = make(map[string]bool)
 		}
-		product[j.MustString("productCode")] = true
+		product[j.Get("productCode").MustString()] = true
 		productResult[date] = product
 	}
 
