@@ -8,6 +8,8 @@ COPY bin/jetbrains-licenser /opt/bin/jetbrains-licenser
 
 COPY jetbrains-licenser-proxy /opt/bin/jetbrains-licenser-proxy
 
+COPY tmpl/statistics.html /opt/tmpl/statistics.html
+
 EXPOSE 80
 
 VOLUME /opt/log

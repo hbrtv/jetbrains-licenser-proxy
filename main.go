@@ -16,7 +16,7 @@ var (
 	redirect = flag.String("r", "http://blog.wolfogre.com/posts/jetbrains-licenser/", "redirect")
 	logpath = flag.String("l", "/opt/log/licenser.log", "log path")
 	binpath = flag.String("b", "/opt/bin/jetbrains-licenser", "bin path")
-	tempdir = flag.String("t", "./tmpl", "template dir")
+	tempdir = flag.String("t", "/opt/tmpl", "template dir")
 )
 
 func main() {
