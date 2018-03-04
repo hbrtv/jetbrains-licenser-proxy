@@ -7,10 +7,12 @@ import (
 	"time"
 	"encoding/json"
 	"fmt"
+	"html/template"
 )
 
 type Handler struct {
 	FileLogPath string
+	TemplateDir string
 	RedirectUrl string
 	LicenserAddr string
 	client *http.Client
@@ -42,6 +44,20 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/log" {
 		http.ServeFile(w, r, h.FileLogPath)
 		reqlog.Infof("return %v", h.FileLogPath)
+		return
+	}
+
+	if r.URL.Path == "/statistics" {
+		temp, err := template.ParseFiles(h.TemplateDir + "/statistics.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = temp.Execute(w, GetStatistics())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 

@@ -16,6 +16,7 @@ var (
 	redirect = flag.String("r", "http://blog.wolfogre.com/posts/jetbrains-licenser/", "redirect")
 	logpath = flag.String("l", "/opt/log/licenser.log", "log path")
 	binpath = flag.String("b", "/opt/bin/jetbrains-licenser", "bin path")
+	tempdir = flag.String("t", "./tmpl", "template dir")
 )
 
 func main() {
@@ -29,12 +30,17 @@ func main() {
 			"user", *user,
 			"redirect", *redirect,
 			"logpath", *logpath,
-			"binpath", *binpath)
+			"binpath", *binpath,
+			"tempdir", *tempdir)
+
+	InitStatistics(*logpath)
+
 	go Licenser(*binpath, LICENSER_PORT, *user)
 
 	http.ListenAndServe(fmt.Sprintf(":%v", *port), &Handler{
 		FileLogPath: *logpath,
 		RedirectUrl: *redirect,
 		LicenserAddr: fmt.Sprintf("http://localhost:%v", LICENSER_PORT),
+		TemplateDir: *tempdir,
 	})
 }
