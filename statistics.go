@@ -73,6 +73,9 @@ func InitStatistics(fileLogPath string) {
 }
 
 func GetStatistics() map[string]interface{} {
+	resultM.RLock()
+	defer resultM.RUnlock()
+
 	var times, user, ip, product []int
 	for _, date := range dateResult{
 		if v, ok := timesResult[date]; ok {

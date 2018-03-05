@@ -41,26 +41,11 @@
         yAxis: {
             type: 'value'
         },
-        series: [{
-            name: "次数",
-            data: [
-            {{ range $i, $v := .Times }}
-            {{ if eq $i 0 }}
-                {{ $v }}
-            {{ else }}
-                ,{{ $v }}
-            {{ end }}
-            {{end}}
-            ],
-            type: 'line',
-            label:{
-                show: true
-            }
-        },
+        series: [
             {
-                name: "用户数",
+                name: "次数",
                 data: [
-                {{ range $i, $v := .User }}
+                {{ range $i, $v := .Times }}
                 {{ if eq $i 0 }}
                     {{ $v }}
                 {{ else }}
@@ -77,6 +62,22 @@
                 name: "IP数",
                 data: [
                 {{ range $i, $v := .IP }}
+                {{ if eq $i 0 }}
+                    {{ $v }}
+                {{ else }}
+                    ,{{ $v }}
+                {{ end }}
+                {{end}}
+                ],
+                type: 'line',
+                label:{
+                    show: true
+                }
+            },
+            {
+                name: "用户数",
+                data: [
+                {{ range $i, $v := .User }}
                 {{ if eq $i 0 }}
                     {{ $v }}
                 {{ else }}
