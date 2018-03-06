@@ -13,8 +13,10 @@ import (
 var (
 	resultM = &sync.RWMutex{}
 	dateResult []string
+	userSet = make(map[string]bool)
 	timesResult = make(map[string]int)
 	userResult = make(map[string]map[string]bool)
+	newUserResult = make(map[string]int)
 	ipResult = make(map[string]map[string]bool)
 	productResult = make(map[string]map[string]bool)
 )
@@ -55,6 +57,12 @@ func InitStatistics(fileLogPath string) {
 		user[j.Get("machineId").MustString()] = true
 		userResult[date] = user
 
+		if _, ok := userSet[j.Get("machineId").MustString()]; !ok {
+			userSet[j.Get("machineId").MustString()] = true
+			newUser, _ := newUserResult[date]
+			newUserResult[date] = newUser + 1
+		}
+
 		ip, ok := ipResult[date]
 		if !ok {
 			ip = make(map[string]bool)
@@ -76,7 +84,7 @@ func GetStatistics() map[string]interface{} {
 	resultM.RLock()
 	defer resultM.RUnlock()
 
-	var times, user, ip, product []int
+	var times, user, newUser, ip, product []int
 	for _, date := range dateResult{
 		if v, ok := timesResult[date]; ok {
 			times = append(times, v)
@@ -87,6 +95,11 @@ func GetStatistics() map[string]interface{} {
 			user = append(user, len(v))
 		} else {
 			user = append(user, 0)
+		}
+		if v, ok := newUserResult[date]; ok {
+			newUser = append(newUser, v)
+		} else {
+			newUser = append(newUser, 0)
 		}
 		if v, ok := ipResult[date]; ok {
 			ip = append(ip, len(v))
@@ -103,6 +116,7 @@ func GetStatistics() map[string]interface{} {
 		"Date": dateResult,
 		"Times": times,
 		"User": user,
+		"NewUser": newUser,
 		"IP": ip,
 		"Product": product,
 	}
@@ -124,6 +138,12 @@ func AppendLog(time, machineId, _ip, productCode string) {
 	}
 	user[machineId] = true
 	userResult[date] = user
+
+	if _, ok := userSet[machineId]; !ok {
+		userSet[machineId] = true
+		newUser, _ := newUserResult[date]
+		newUserResult[date] = newUser + 1
+	}
 
 	ip, ok := ipResult[date]
 	if !ok {
