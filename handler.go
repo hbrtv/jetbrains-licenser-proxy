@@ -42,8 +42,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/log" {
-		http.ServeFile(w, r, h.FileLogPath)
-		reqlog.Infof("return %v", h.FileLogPath)
+		lastLog := GetLastLog()
+		w.Header().Add("Content-Type", "text/plain; charset=utf-8")
+		for _, v := range lastLog {
+			w.Write(v)
+		}
+		reqlog.Infof("log")
 		return
 	}
 

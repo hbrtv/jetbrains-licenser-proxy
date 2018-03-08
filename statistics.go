@@ -122,7 +122,7 @@ func GetStatistics() map[string]interface{} {
 	}
 }
 
-func AppendLog(time, machineId, _ip, productCode string) {
+func AppendStatistics(time, machineId, _ip, productCode string) {
 	resultM.Lock()
 	defer resultM.Unlock()
 
