@@ -21,6 +21,9 @@ var (
 )
 
 func InitFileLog(logpath string) error {
+	fileM = &sync.Mutex{}
+	lastLogM = &sync.RWMutex{}
+
 	if buffer, err := ioutil.ReadFile(logpath); err == nil{
 		scanner := bufio.NewScanner(bytes.NewReader(buffer))
 		for scanner.Scan() {
@@ -36,8 +39,6 @@ func InitFileLog(logpath string) error {
 		return err
 	}
 	file = f
-	fileM = &sync.Mutex{}
-	lastLogM = &sync.RWMutex{}
 	return nil
 }
 
