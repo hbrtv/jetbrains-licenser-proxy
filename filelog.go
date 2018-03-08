@@ -30,7 +30,9 @@ func InitFileLog(logpath string) error {
 			if len(scanner.Bytes()) == 0 {
 				continue
 			}
-			AppendLastLog(scanner.Bytes())
+			line := make([]byte, len(scanner.Bytes()))
+			copy(line, scanner.Bytes())
+			AppendLastLog(line)
 		}
 	}
 
@@ -58,7 +60,7 @@ func FileLog(ip, location string, u *url.URL) {
 	if err != nil {
 		Log.Panic(err)
 	}
-	AppendLastLog(append(buffer, '\n'))
+	AppendLastLog(buffer)
 	AppendStatistics(t, u.Query().Get("machineId"), ip, u.Query().Get("productCode"))
 }
 
@@ -71,8 +73,13 @@ func AppendLastLog(log []byte) {
 	}
 }
 
-func GetLastLog() [][]byte {
+func GetLastLog() []byte {
 	lastLogM.RLock()
 	defer lastLogM.RUnlock()
-	return lastLog
+	result := make([]byte, 0)
+	for _, v := range lastLog {
+		result = append(result, v...)
+		result = append(result, '\n')
+	}
+	return result
 }

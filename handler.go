@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"strconv"
 )
 
 type Handler struct {
@@ -44,9 +45,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/log" {
 		lastLog := GetLastLog()
 		w.Header().Add("Content-Type", "text/plain; charset=utf-8")
-		for _, v := range lastLog {
-			w.Write(v)
-		}
+		w.Header().Add("Content-Length", strconv.Itoa(len(lastLog)))
+		w.Write(lastLog)
 		reqlog.Infof("log")
 		return
 	}
