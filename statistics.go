@@ -30,6 +30,7 @@ func InitStatistics(fileLogPath string) {
 		Log.Errorf("failed to open %v", fileLogPath)
 		return
 	}
+	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	count := 0
 	for scanner.Scan() {
