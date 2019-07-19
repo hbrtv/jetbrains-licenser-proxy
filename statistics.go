@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"bytes"
 	"github.com/bitly/go-simplejson"
+	"runtime"
 	"sync"
 	"strings"
 	"time"
@@ -31,7 +32,14 @@ func InitStatistics(fileLogPath string) {
 		return
 	}
 	scanner := bufio.NewScanner(bytes.NewReader(buffer))
+	count := 0
 	for scanner.Scan() {
+		if count >= 1000 && count % 1000 == 0 {
+			runtime.GC()
+			Log.Infof("smooth starting: %v", count)
+			time.Sleep(time.Second)
+		}
+		count++
 		if len(scanner.Bytes()) == 0 {
 			continue
 		}
@@ -77,7 +85,8 @@ func InitStatistics(fileLogPath string) {
 		product[j.Get("productCode").MustString()] = true
 		productResult[date] = product
 	}
-
+	runtime.GC()
+	Log.Infof("smooth started: %v", count)
 }
 
 func GetStatistics() map[string]interface{} {
