@@ -1,13 +1,12 @@
 package main
 
 import (
-	"io/ioutil"
 	"bufio"
-	"bytes"
 	"github.com/bitly/go-simplejson"
+	"os"
 	"runtime"
-	"sync"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -26,15 +25,15 @@ func InitStatistics(fileLogPath string) {
 	resultM.Lock()
 	defer resultM.Unlock()
 
-	buffer, err := ioutil.ReadFile(fileLogPath)
+	f, err := os.Open(fileLogPath)
 	if err != nil{
-		Log.Errorf("failed to read %v", fileLogPath)
+		Log.Errorf("failed to open %v", fileLogPath)
 		return
 	}
-	scanner := bufio.NewScanner(bytes.NewReader(buffer))
+	scanner := bufio.NewScanner(f)
 	count := 0
 	for scanner.Scan() {
-		if count >= 1000 && count % 1000 == 0 {
+		if count >= 10000 && count % 10000 == 0 {
 			runtime.GC()
 			Log.Infof("smooth starting: %v", count)
 			time.Sleep(time.Second)
