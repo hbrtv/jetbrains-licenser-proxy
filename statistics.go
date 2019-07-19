@@ -34,7 +34,7 @@ func InitStatistics(fileLogPath string) {
 	scanner := bufio.NewScanner(f)
 	count := 0
 	for scanner.Scan() {
-		if count >= 10000 && count % 10000 == 0 {
+		if count >= 1000 && count % 1000 == 0 {
 			runtime.GC()
 			Log.Infof("smooth starting: %v", count)
 			time.Sleep(time.Second)
