@@ -2,26 +2,50 @@
 
 
 [[projects]]
+  digest = "1:512883404c2a99156e410e9880e3bb35ecccc0c07c1159eb204b5f3ef3c431b3"
+  name = "github.com/bitly/go-simplejson"
+  packages = ["."]
+  pruneopts = ""
+  revision = "aabad6e819789e569bd6aabf444c935aa9ba1e44"
+  version = "v0.5.0"
+
+[[projects]]
+  digest = "1:6e8d05f4da3ff913adf807cb34623811f764b4924369f65c3ab9db744e8fe6ad"
   name = "go.uber.org/atomic"
   packages = ["."]
+  pruneopts = ""
   revision = "8474b86a5a6f79c443ce4b2992817ff32cf208b8"
   version = "v1.3.1"
 
 [[projects]]
+  digest = "1:22c7effcb4da0eacb2bb1940ee173fac010e9ef3c691f5de4b524d538bd980f5"
   name = "go.uber.org/multierr"
   packages = ["."]
+  pruneopts = ""
   revision = "3c4937480c32f4c13a875a1829af76c98ca3d40a"
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:cfeddca8479edac1039a52dac1ff6e7a76252ebaecb86680383b0522423b7565"
   name = "go.uber.org/zap"
-  packages = [".","buffer","internal/bufferpool","internal/color","internal/exit","zapcore"]
+  packages = [
+    ".",
+    "buffer",
+    "internal/bufferpool",
+    "internal/color",
+    "internal/exit",
+    "zapcore",
+  ]
+  pruneopts = ""
   revision = "35aad584952c3e7020db7b839f6b102de6271f89"
   version = "v1.7.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b91aa00ee237612dc6cc6a1a24295ff69bce14db4d28899dcd105d3c5609d7f2"
+  input-imports = [
+    "github.com/bitly/go-simplejson",
+    "go.uber.org/zap",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
