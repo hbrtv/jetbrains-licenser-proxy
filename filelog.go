@@ -1,42 +1,43 @@
 package main
 
 import (
-	"os"
-	"sync"
-	"net/url"
-	"fmt"
-	"time"
-	"strings"
-	"encoding/json"
-	"io/ioutil"
 	"bufio"
-	"bytes"
+	"container/list"
+	"encoding/json"
+	"fmt"
+	"net/url"
+	"os"
+	"strings"
+	"sync"
+	"time"
 )
 
 var (
 	file *os.File
 	fileM *sync.Mutex
-	lastLog [][]byte
+	lastLog *list.List
 	lastLogM *sync.RWMutex
 )
 
 func InitFileLog(logpath string) error {
 	fileM = &sync.Mutex{}
+	lastLog = list.New()
 	lastLogM = &sync.RWMutex{}
 
-	if buffer, err := ioutil.ReadFile(logpath); err == nil{
-		scanner := bufio.NewScanner(bytes.NewReader(buffer))
-		for scanner.Scan() {
-			if len(scanner.Bytes()) == 0 {
-				continue
-			}
-			line := make([]byte, len(scanner.Bytes()))
-			copy(line, scanner.Bytes())
-			AppendLastLog(line)
-		}
+	f, err := os.Open(logpath)
+	if err != nil {
+		return err
 	}
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		if len(scanner.Text()) == 0 {
+			continue
+		}
+		AppendLastLog(scanner.Text())
+	}
+	f.Close()
 
-	f, err := os.OpenFile(logpath, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0666)
+	f, err = os.OpenFile(logpath, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0666)
 	if err != nil {
 		return err
 	}
@@ -60,26 +61,28 @@ func FileLog(ip, location string, u *url.URL) {
 	if err != nil {
 		Log.Panic(err)
 	}
-	AppendLastLog(buffer)
+	AppendLastLog(string(buffer))
 	AppendStatistics(t, u.Query().Get("machineId"), ip, u.Query().Get("productCode"))
 }
 
-func AppendLastLog(log []byte) {
+func AppendLastLog(log string) {
 	lastLogM.Lock()
 	defer lastLogM.Unlock()
-	lastLog = append(lastLog, log)
-	for len(lastLog) > 100 {
-		lastLog = lastLog[1:]
+	lastLog.PushBack(log)
+	for lastLog.Len() > 100 {
+		lastLog.Remove(lastLog.Front())
 	}
 }
 
 func GetLastLog() []byte {
 	lastLogM.RLock()
 	defer lastLogM.RUnlock()
-	result := make([]byte, 0)
-	for _, v := range lastLog {
-		result = append(result, v...)
-		result = append(result, '\n')
+	result := strings.Builder{}
+	it := lastLog.Front()
+	for it != nil {
+		result.WriteString(it.Value.(string))
+		result.WriteString("\n")
+		it = it.Next()
 	}
-	return result
+	return []byte(result.String())
 }

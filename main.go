@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"net/http"
 	"fmt"
+	"net/http"
 )
 
 const (
