@@ -2,21 +2,22 @@ package main
 
 import (
 	"bufio"
-	"github.com/bitly/go-simplejson"
 	"os"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/bitly/go-simplejson"
 )
 
 var (
-	resultM = &sync.RWMutex{}
-	dateResult []string
-	userSet = make(map[string]bool)
-	timesResult = make(map[string]int)
-	userResult = make(map[string]map[string]bool)
+	resultM       = &sync.RWMutex{}
+	dateResult    []string
+	userSet       = make(map[string]bool)
+	timesResult   = make(map[string]int)
+	userResult    = make(map[string]map[string]bool)
 	newUserResult = make(map[string]int)
-	ipResult = make(map[string]map[string]bool)
+	ipResult      = make(map[string]map[string]bool)
 	productResult = make(map[string]map[string]bool)
 )
 
@@ -25,7 +26,7 @@ func InitStatistics(fileLogPath string) {
 	defer resultM.Unlock()
 
 	f, err := os.Open(fileLogPath)
-	if err != nil{
+	if err != nil {
 		Log.Errorf("failed to open %v", fileLogPath)
 		return
 	}
@@ -33,7 +34,7 @@ func InitStatistics(fileLogPath string) {
 	scanner := bufio.NewScanner(f)
 	count := 0
 	for scanner.Scan() {
-		if count >= 10000 && count % 10000 == 0 {
+		if count >= 10000 && count%10000 == 0 {
 			Log.Infof("smooth starting: %v", count)
 			time.Sleep(time.Second)
 		}
@@ -91,7 +92,7 @@ func GetStatistics() map[string]interface{} {
 	defer resultM.RUnlock()
 
 	var times, user, newUser, ip, product []int
-	for _, date := range dateResult{
+	for _, date := range dateResult {
 		if v, ok := timesResult[date]; ok {
 			times = append(times, v)
 		} else {
@@ -119,11 +120,11 @@ func GetStatistics() map[string]interface{} {
 		}
 	}
 	return map[string]interface{}{
-		"Date": dateResult,
-		"Times": times,
-		"User": user,
+		"Date":    dateResult,
+		"Times":   times,
+		"User":    user,
 		"NewUser": newUser,
-		"IP": ip,
+		"IP":      ip,
 		"Product": product,
 	}
 }
@@ -171,7 +172,7 @@ func appendDate(start string) {
 		dateResult = append(dateResult, start)
 	}
 	for {
-		newest, err := time.ParseInLocation("20060102", dateResult[len(dateResult) - 1], time.Local)
+		newest, err := time.ParseInLocation("20060102", dateResult[len(dateResult)-1], time.Local)
 		if err != nil {
 			Log.Panic(err)
 		}

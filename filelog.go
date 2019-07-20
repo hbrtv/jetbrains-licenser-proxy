@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	file *os.File
-	fileM *sync.Mutex
-	lastLog *list.List
+	file     *os.File
+	fileM    *sync.Mutex
+	lastLog  *list.List
 	lastLogM *sync.RWMutex
 )
 
@@ -37,7 +37,7 @@ func InitFileLog(logpath string) error {
 	}
 	f.Close()
 
-	f, err = os.OpenFile(logpath, os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0666)
+	f, err = os.OpenFile(logpath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		return err
 	}

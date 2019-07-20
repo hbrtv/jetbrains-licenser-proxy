@@ -1,9 +1,9 @@
 package main
 
 import (
+	"os"
 	"os/exec"
 	"strconv"
-	"os"
 )
 
 func Licenser(binpath string, port int, user string) {

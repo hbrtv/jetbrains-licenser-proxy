@@ -1,22 +1,22 @@
 package main
 
 import (
-	"net/http"
-	"strings"
-	"io/ioutil"
-	"time"
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
+	"net/http"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type Handler struct {
-	FileLogPath string
-	TemplateDir string
-	RedirectUrl string
+	FileLogPath  string
+	TemplateDir  string
+	RedirectUrl  string
 	LicenserAddr string
-	client *http.Client
+	client       *http.Client
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -25,10 +25,10 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ip = strings.Split(r.RemoteAddr, ":")[0]
 	}
 	reqlog := Log.With(
-			"ip", ip,
-			"method", r.Method,
-			"url", r.URL.String(),
-			"agent", r.UserAgent())
+		"ip", ip,
+		"method", r.Method,
+		"url", r.URL.String(),
+		"agent", r.UserAgent())
 	if r.Method != "GET" {
 		code := http.StatusMethodNotAllowed
 		http.Error(w, http.StatusText(code), code)
@@ -101,13 +101,13 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 type LocateResponse struct {
 	Code int `json:"code"`
-	Data struct{
+	Data struct {
 		Country string `json:"country"`
-		Area string `json:"area"`
-		Region string `json:"region"`
-		City string `json:"city"`
-		County string `json:"county"`
-		Isp string `json:"isp"`
+		Area    string `json:"area"`
+		Region  string `json:"region"`
+		City    string `json:"city"`
+		County  string `json:"county"`
+		Isp     string `json:"isp"`
 	} `json:"data"`
 }
 
