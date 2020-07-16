@@ -5,7 +5,7 @@ check:
 	git diff HEAD --quiet || exit 1
 
 build: check
-	GOOS=linux GOARCH=amd64 go build -v -o jetbrains-licenser-proxy
+	GOOS=linux GOARCH=amd64 go build -v -o output/jetbrains-licenser-proxy
 
 image: build
 	docker build -t $(IMAGE_NAME):$(VERSION) .
