@@ -1,4 +1,4 @@
-FROM centos:7
+FROM centos:8
 
 ENV TZ=Asia/Shanghai
 
@@ -14,4 +14,4 @@ EXPOSE 80
 
 VOLUME /opt/log
 
-ENTRYPOINT ["/opt/bin/jetbrains-licenser-proxy"]
+CMD ["/opt/bin/jetbrains-licenser-proxy"]
