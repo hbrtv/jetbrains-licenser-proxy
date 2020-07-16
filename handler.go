@@ -113,7 +113,7 @@ type LocateResponse struct {
 
 func (h *Handler) LocateIP(ip string) string {
 	log := Log.With("ip", ip)
-	resp, err := h.client.Get("http://ip.taobao.com/service/getIpInfo.php?ip=" + ip)
+	resp, err := h.client.Get("http://ip.taobao.com/service/getIpInfo.php?accessKey=alibaba-inc&ip=" + ip)
 	if err != nil {
 		log.Infof("can not get ip location: %v", err)
 		return ""
