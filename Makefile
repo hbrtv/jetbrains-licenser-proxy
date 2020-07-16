@@ -4,7 +4,10 @@ VERSION=$(shell date "+%y.%m").$(shell git rev-list --count --since="$(shell dat
 check:
 	git diff HEAD --quiet || exit 1
 
-image: check
+build: check
+	go build -v -o jetbrains-licenser-proxy
+
+image: build
 	docker build -t $(IMAGE_NAME):$(VERSION) .
 
 push: image
